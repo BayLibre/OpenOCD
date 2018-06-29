@@ -36,7 +36,7 @@ class OpenOCD:
         s = ''
         Lines = []
         while True:
-            s += self.tn.read_some()
+            s += self.tn.read_some().decode()
             l = s.splitlines()
             if len(l) > 1:
                 for s in l[:-1]:
@@ -52,7 +52,7 @@ class OpenOCD:
             if arg:
                 Text += ' ' + arg
         Text += '\n'
-        self.tn.write(Text)
+        self.tn.write(Text.encode())
         return self.Readout()
 
 
@@ -61,15 +61,15 @@ class OpenOCD:
     #
     @staticmethod
     def ValueHex(n):
-        return "0x%x" % n if isinstance(n, (int, long)) else str(n)
+        return "0x%x" % n if isinstance(n, int) else str(n)
 
     @staticmethod
     def ValueHex32(n):
-        return "0x%08x" % n if isinstance(n, (int, long)) else str(n)
+        return "0x%08x" % n if isinstance(n, int) else str(n)
 
     @staticmethod
     def ValueDec(n):
-        return "%d" % n if isinstance(n, (int, long)) else str(n)
+        return "%d" % n if isinstance(n, int) else str(n)
 
     @staticmethod
     def ImageFormat(Bin, IHex, Elf, S19):
@@ -184,7 +184,7 @@ class OpenOCD:
             w = r[1].split()
             if w[0] != self.Name:
                 return None
-            return long(w[2], 16)
+            return int(w[2], 16)
 
         #
         # Write value to the register
@@ -223,7 +223,7 @@ class OpenOCD:
             if r:
                 Index = r.group('index')
                 Name  = r.group('name')
-                Width = long(r.group('width'))
+                Width = int(r.group('width'))
                 Info = RegInfo(Index, Name, Width)
                 if Dict:
                     All[Info.Name] = Info
@@ -243,7 +243,7 @@ class OpenOCD:
         w = r[1].split()
         if w[0] != AddrHex + ':':
             return None
-        return long(w[1], 16)
+        return int(w[1], 16)
 
     def ReadMem32(self, Addr):
         return self.ReadMem_('mdw', Addr)
@@ -352,8 +352,8 @@ class OpenOCD:
         for s in self.Exec('bp'):
             r = reBP.match(s)
             if r:
-                Addr = long(r.group('addr'), 16)
-                Size = long(r.group('size'), 16)
+                Addr = int(r.group('addr'), 16)
+                Size = int(r.group('size'), 16)
                 bp = self.BpOCD(self, Addr, Size)
                 All.append(bp)
         return All
@@ -400,11 +400,11 @@ class OpenOCD:
         for s in self.Exec('wp'):
             r = reWP.match(s)
             if r:
-                Addr  = long(r.group('addr'), 16)
-                Len   = long(r.group('len'))
-                RWA   = long(r.group('rwa'))
-                Value = long(r.group('value'), 16)
-                Mask  = long(r.group('mask'), 16)
+                Addr  = int(r.group('addr'), 16)
+                Len   = int(r.group('len'))
+                RWA   = int(r.group('rwa'))
+                Value = int(r.group('value'), 16)
+                Mask  = int(r.group('mask'), 16)
 
                 wp = self.WpOCD(self, Addr, Len, RWA, Value, Mask)
                 All.append(wp)
