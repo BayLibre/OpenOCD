@@ -138,7 +138,7 @@ class OpenOCD:
     # Using 0 as the MS parameter prevents OpenOCD from waiting.
     #
     def Halt(self, MS=100):
-        return self.Exec('halt', ValueDec(MS))
+        return self.Exec('halt', OpenOCD.ValueDec(MS))
 
     #
     # Perform as hard a reset as possible, using SRST if possible. All defined targets will be reset, and target events will fire during the reset sequence.
